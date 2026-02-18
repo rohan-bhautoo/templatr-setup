@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/templatr/templatr-setup/internal/selfupdate"
 	"golang.org/x/term"
 )
 
@@ -44,8 +45,25 @@ web dashboard in your browser.`,
 
 // Execute is the entry point called from main.
 func Execute() {
+	// Non-blocking update check (runs in background, prints notice after command)
+	updateCh := make(chan *selfupdate.CheckResult, 1)
+	go func() {
+		updateCh <- selfupdate.CheckForUpdate(versionStr)
+	}()
+
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
+	}
+
+	// Show update notice if available
+	select {
+	case result := <-updateCh:
+		if result != nil && result.UpdateAvail {
+			fmt.Fprintf(os.Stderr, "\nA new version of templatr-setup is available: %s (current: %s)\n", result.LatestVersion, result.CurrentVersion)
+			fmt.Fprintf(os.Stderr, "Run 'templatr-setup update' to upgrade, or visit https://templatr.io/tools/setup\n")
+		}
+	default:
+		// Don't wait — check hasn't finished yet, skip the notice
 	}
 }
 

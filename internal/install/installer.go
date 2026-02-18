@@ -155,3 +155,83 @@ func ExecutePlan(plan *engine.SetupPlan, log *logger.Logger, progress ProgressFu
 
 	return results, nil
 }
+
+// InstallSingleRuntime installs one runtime: resolves version, downloads,
+// sets PATH and env vars, and records state. Used by the TUI for per-runtime progress.
+func InstallSingleRuntime(rp engine.RuntimePlan, templateSlug string, log *logger.Logger, progress ProgressFunc) (*InstallResult, error) {
+	installer := GetInstaller(rp.Name)
+	if installer == nil {
+		return nil, fmt.Errorf("no installer available for runtime %q", rp.Name)
+	}
+
+	log.Info("Resolving version for %s (requires %s)...", rp.DisplayName, rp.RequiredVersion)
+
+	version, err := installer.ResolveVersion(rp.RequiredVersion)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve version for %s: %w", rp.DisplayName, err)
+	}
+	log.Info("Will install %s %s", rp.DisplayName, version)
+
+	runtimesBase, err := RuntimesDir()
+	if err != nil {
+		return nil, fmt.Errorf("failed to determine runtimes directory: %w", err)
+	}
+
+	targetDir := filepath.Join(runtimesBase, rp.Name, version)
+	log.Info("Installing %s %s to %s...", rp.DisplayName, version, targetDir)
+
+	if err := installer.Install(version, targetDir, progress); err != nil {
+		return nil, fmt.Errorf("failed to install %s %s: %w", rp.DisplayName, version, err)
+	}
+
+	binDir := installer.BinDir(targetDir)
+	log.Info("Adding %s to PATH...", binDir)
+
+	// Load state
+	st, stErr := state.Load()
+	if stErr != nil {
+		st = state.NewState()
+	}
+
+	pathEntry, err := AddToPath(binDir)
+	if err != nil {
+		log.Warn("Failed to add %s to PATH: %s", binDir, err)
+	} else if pathEntry != nil {
+		st.AddPathModification(*pathEntry)
+	}
+
+	// Set env vars
+	envVars := installer.EnvVars(targetDir)
+	for envName, envValue := range envVars {
+		log.Info("Setting %s=%s", envName, envValue)
+		envEntry, err := SetEnvVar(envName, envValue)
+		if err != nil {
+			log.Warn("Failed to set %s: %s", envName, err)
+		} else if envEntry != nil {
+			st.AddEnvModification(*envEntry)
+		}
+	}
+
+	st.AddInstallation(state.Installation{
+		Runtime:         rp.Name,
+		Version:         version,
+		Path:            targetDir,
+		Template:        templateSlug,
+		Action:          string(rp.Action),
+		PreviousVersion: rp.InstalledVersion,
+		PreviousPath:    rp.InstalledPath,
+	})
+
+	if err := st.Save(); err != nil {
+		log.Warn("Failed to save state: %s", err)
+	}
+
+	log.Info("%s %s installed successfully", rp.DisplayName, version)
+
+	return &InstallResult{
+		Runtime:     rp.Name,
+		Version:     version,
+		InstallPath: targetDir,
+		BinDir:      binDir,
+	}, nil
+}

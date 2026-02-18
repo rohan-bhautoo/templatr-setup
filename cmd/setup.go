@@ -6,12 +6,14 @@ import (
 	"os"
 	"strings"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 	"github.com/templatr/templatr-setup/internal/engine"
 	"github.com/templatr/templatr-setup/internal/install"
 	"github.com/templatr/templatr-setup/internal/logger"
 	"github.com/templatr/templatr-setup/internal/manifest"
 	"github.com/templatr/templatr-setup/internal/packages"
+	"github.com/templatr/templatr-setup/internal/tui"
 )
 
 var (
@@ -41,9 +43,6 @@ func init() {
 }
 
 func runSetupCommand() {
-	fmt.Println("templatr-setup — Template dependency installer")
-	fmt.Printf("Version: %s (commit: %s, built: %s)\n\n", versionStr, commitStr, dateStr)
-
 	// Initialize logger
 	log := logger.New()
 	if err := log.Init(); err != nil {
@@ -81,21 +80,42 @@ func runSetupCommand() {
 		os.Exit(1)
 	}
 
-	// Display summary
-	engine.PrintSummary(plan)
-
+	// Dry run: print summary and exit
 	if dryRun {
+		engine.PrintSummary(plan)
 		fmt.Println("Dry run mode — no changes were made.")
 		return
 	}
 
-	if !plan.NeedsAction() {
-		fmt.Println("Nothing to install — all requirements are satisfied.")
-		fmt.Println("Run 'templatr-setup configure' to set up environment variables and config files.")
+	// Interactive TUI mode when running in a terminal
+	if isTerminal() {
+		tuiModel := tui.New(plan, log, yesFlag)
+		p := tea.NewProgram(tuiModel, tea.WithAltScreen())
+		if _, err := p.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "TUI error: %s\n", err)
+			log.Error("TUI error: %s", err)
+			os.Exit(1)
+		}
 		return
 	}
 
-	// Confirm with user
+	// Fallback: non-interactive plain text mode (CI, pipes, etc.)
+	runSetupPlainText(plan, m, log)
+}
+
+// runSetupPlainText is the non-TUI fallback for non-interactive environments.
+func runSetupPlainText(plan *engine.SetupPlan, m *manifest.Manifest, log *logger.Logger) {
+	fmt.Println("templatr-setup — Template dependency installer")
+	fmt.Printf("Version: %s\n\n", versionStr)
+
+	engine.PrintSummary(plan)
+
+	if !plan.NeedsAction() {
+		fmt.Println("Nothing to install — all requirements are satisfied.")
+		return
+	}
+
+	// Confirm
 	if !yesFlag {
 		fmt.Print("Proceed with installation? [y/N] ")
 		reader := bufio.NewReader(os.Stdin)
@@ -110,7 +130,6 @@ func runSetupCommand() {
 	fmt.Println()
 	log.Info("Starting installation...")
 
-	// Execute installation plan
 	progress := func(downloaded, total int64) {
 		if total > 0 {
 			pct := float64(downloaded) / float64(total) * 100
@@ -125,53 +144,38 @@ func runSetupCommand() {
 		fmt.Fprintf(os.Stderr, "\nError: %s\n", err)
 		log.Error("Installation failed: %s", err)
 		if log.FilePath() != "" {
-			fmt.Fprintf(os.Stderr, "See log file for details: %s\n", log.FilePath())
+			fmt.Fprintf(os.Stderr, "See log file: %s\n", log.FilePath())
 		}
 		os.Exit(1)
 	}
 
-	fmt.Println() // newline after progress bar
+	fmt.Println()
 
-	// Install global packages
 	if err := packages.RunGlobalInstalls(m, log); err != nil {
-		log.Warn("Global package installation had issues: %s", err)
+		log.Warn("Global install issues: %s", err)
 	}
 
-	// Run package install command
-	fmt.Println()
 	if m.Packages.InstallCommand != "" {
-		log.Info("Running package install: %s", m.Packages.InstallCommand)
+		log.Info("Running: %s", m.Packages.InstallCommand)
 		if err := packages.RunInstall(m, log); err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: %s\n", err)
-			log.Warn("Package install failed: %s", err)
 		}
 	}
 
-	// Summary
 	fmt.Println()
 	fmt.Println("Installation complete!")
-	fmt.Println()
 	for _, r := range results {
 		fmt.Printf("  ✓ %s %s → %s\n", r.Runtime, r.Version, r.InstallPath)
 	}
 
-	// Post-setup hint
-	fmt.Println()
-	if len(m.Env) > 0 || len(m.Config) > 0 {
-		fmt.Println("Run 'templatr-setup configure' to set up environment variables and config files.")
-	}
-
-	// Post-setup commands
 	if len(m.PostSetup.Commands) > 0 {
 		fmt.Println()
 		log.Info("Running post-setup commands...")
 		if err := packages.RunPostSetup(m, log); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: post-setup command failed: %s\n", err)
-			log.Warn("Post-setup failed: %s", err)
+			fmt.Fprintf(os.Stderr, "Warning: %s\n", err)
 		}
 	}
 
-	// Success message
 	if m.PostSetup.Message != "" {
 		fmt.Println()
 		fmt.Println(strings.TrimSpace(m.PostSetup.Message))
@@ -180,6 +184,4 @@ func runSetupCommand() {
 	if log.FilePath() != "" {
 		fmt.Printf("\nLog file: %s\n", log.FilePath())
 	}
-
-	log.Info("Setup completed successfully")
 }
