@@ -1,0 +1,78 @@
+version: 2
+
+before:
+  hooks:
+    - cmd: bash -c "cd web && npm ci && npm run build"
+      env:
+        - NODE_ENV=production
+
+builds:
+  - id: templatr-setup
+    main: ./main.go
+    binary: templatr-setup
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: "templatr-setup_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+brews:
+  - repository:
+      owner: templatr
+      name: homebrew-tap
+    name: templatr-setup
+    homepage: "https://templatr.io/tools/setup"
+    description: "Template setup and dependency installer for Templatr templates"
+    license: "MIT"
+    install: |
+      bin.install "templatr-setup"
+
+scoops:
+  - repository:
+      owner: templatr
+      name: scoop-bucket
+    name: templatr-setup
+    homepage: "https://templatr.io/tools/setup"
+    description: "Template setup and dependency installer for Templatr templates"
+    license: "MIT"
+
+winget:
+  - name: templatr-setup
+    publisher: Templatr
+    short_description: "Template setup and dependency installer"
+    homepage: "https://templatr.io/tools/setup"
+    license: "MIT"
+    repository:
+      owner: templatr
+      name: winget-pkgs

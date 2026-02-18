@@ -1,0 +1,32 @@
+# Binaries
+templatr-setup
+templatr-setup.exe
+*.exe
+*.dll
+*.so
+*.dylib
+dist/
+
+# Go
+vendor/
+
+# Web UI build output (rebuilt from source)
+web/dist/
+web/node_modules/
+
+# IDE
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# GoReleaser
+dist/

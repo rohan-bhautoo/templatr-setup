@@ -1,0 +1,56 @@
+# .templatr.toml — Java Spring Boot CMS Template
+
+[template]
+name = "CMS Admin Panel"
+version = "1.0.0"
+tier = "enterprise"
+category = "cms"
+slug = "cms-admin-panel"
+
+[runtimes]
+java = ">=21"
+
+[packages]
+manager = "go"
+install_command = "./mvnw install -DskipTests"
+
+[[env]]
+key = "SPRING_DATASOURCE_URL"
+label = "Database URL"
+description = "JDBC connection string for your database"
+default = "jdbc:postgresql://localhost:5432/cms"
+required = true
+type = "url"
+
+[[env]]
+key = "SPRING_DATASOURCE_USERNAME"
+label = "Database Username"
+default = "postgres"
+required = true
+type = "text"
+
+[[env]]
+key = "SPRING_DATASOURCE_PASSWORD"
+label = "Database Password"
+default = ""
+required = true
+type = "secret"
+
+[[env]]
+key = "JWT_SECRET"
+label = "JWT Secret"
+description = "Secret key for JWT token signing"
+default = ""
+required = true
+type = "secret"
+
+[post_setup]
+commands = ["./mvnw spring-boot:run"]
+message = """
+Your CMS template is ready! The application is starting on http://localhost:8080.
+Default admin credentials: admin@example.com / admin123 (change immediately).
+"""
+
+[meta]
+min_tool_version = "1.0.0"
+docs = "https://templatr.io/cms-admin-panel"

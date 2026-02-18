@@ -1,0 +1,87 @@
+# =============================================================================
+# .templatr.toml — Next.js SaaS Landing Page Template
+# =============================================================================
+# This file tells the Templatr Setup Tool what your template needs.
+# Docs: https://templatr.io/tools/setup
+# =============================================================================
+
+[template]
+name = "SaaS Landing Page Template"
+version = "1.0.0"
+tier = "business"
+category = "website"
+slug = "saas-landing-template"
+
+[runtimes]
+node = ">=20.0.0"
+
+[packages]
+manager = "npm"
+install_command = "npm install"
+
+[[env]]
+key = "NEXT_PUBLIC_SITE_URL"
+label = "Site URL"
+description = "Your production website URL (e.g., https://yourdomain.com)"
+default = "http://localhost:3000"
+required = true
+type = "url"
+
+[[env]]
+key = "RESEND_API_KEY"
+label = "Resend API Key"
+description = "Get your API key at https://resend.com/api-keys"
+default = ""
+required = false
+type = "secret"
+docs_url = "https://resend.com/docs"
+
+[[env]]
+key = "CONTACT_EMAIL"
+label = "Contact Form Recipient"
+description = "Email address that receives contact form submissions"
+default = ""
+required = false
+type = "email"
+
+[[config]]
+file = "src/config/site.ts"
+label = "Site Configuration"
+description = "Core identity and branding for your website"
+
+  [[config.fields]]
+  path = "siteConfig.name"
+  label = "Site Name"
+  description = "Your brand/company name"
+  type = "text"
+  default = "SaaSify"
+
+  [[config.fields]]
+  path = "siteConfig.description"
+  label = "Site Description"
+  description = "A short description for SEO and social sharing"
+  type = "text"
+  default = "Ship your SaaS faster with a beautiful, modern landing page."
+
+  [[config.fields]]
+  path = "siteConfig.url"
+  label = "Production URL"
+  type = "url"
+  default = "https://your-domain.com"
+
+  [[config.fields]]
+  path = "siteConfig.contact.email"
+  label = "Contact Email"
+  type = "email"
+  default = "hello@your-domain.com"
+
+[post_setup]
+commands = ["npm run build"]
+message = """
+Your template is ready! Run 'npm run dev' to start the development server.
+Visit http://localhost:3000 to see your site.
+"""
+
+[meta]
+min_tool_version = "1.0.0"
+docs = "https://templatr.io/saas-landing-template"

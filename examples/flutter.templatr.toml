@@ -1,0 +1,43 @@
+# .templatr.toml — Flutter Mobile App Template
+
+[template]
+name = "E-Commerce Mobile App"
+version = "1.0.0"
+tier = "starter"
+category = "mobileApp"
+slug = "ecommerce-mobile-app"
+
+[runtimes]
+flutter = ">=3.22.0"
+java = ">=17"
+
+[packages]
+manager = "pub"
+install_command = "flutter pub get"
+
+[[env]]
+key = "API_BASE_URL"
+label = "API Base URL"
+description = "Backend API URL for the mobile app"
+default = "http://localhost:8080"
+required = true
+type = "url"
+
+[[env]]
+key = "FIREBASE_PROJECT_ID"
+label = "Firebase Project ID"
+description = "Your Firebase project ID for push notifications"
+default = ""
+required = false
+type = "text"
+docs_url = "https://firebase.google.com/docs"
+
+[post_setup]
+commands = ["flutter build apk --debug"]
+message = """
+Your app is ready! Run 'flutter run' to launch on a connected device or emulator.
+"""
+
+[meta]
+min_tool_version = "1.0.0"
+docs = "https://templatr.io/ecommerce-mobile-app"

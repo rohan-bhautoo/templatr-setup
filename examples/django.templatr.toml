@@ -1,0 +1,54 @@
+# .templatr.toml — Django CRM Template
+
+[template]
+name = "CRM Dashboard Template"
+version = "1.0.0"
+tier = "business"
+category = "crm"
+slug = "crm-dashboard"
+
+[runtimes]
+python = ">=3.12.0"
+node = ">=20.0.0"
+
+[packages]
+manager = "pip"
+install_command = "pip install -r requirements.txt"
+
+[[env]]
+key = "SECRET_KEY"
+label = "Django Secret Key"
+description = "A random string used for cryptographic signing"
+default = ""
+required = true
+type = "secret"
+
+[[env]]
+key = "DATABASE_URL"
+label = "Database URL"
+description = "PostgreSQL connection string"
+default = "postgresql://localhost:5432/crm"
+required = true
+type = "url"
+
+[[env]]
+key = "DEBUG"
+label = "Debug Mode"
+description = "Enable Django debug mode (disable in production)"
+default = "true"
+required = false
+type = "boolean"
+
+[post_setup]
+commands = [
+  "python manage.py migrate",
+  "python manage.py collectstatic --noinput",
+]
+message = """
+Your CRM template is ready! Run 'python manage.py runserver' to start.
+Visit http://localhost:8000 to see your dashboard.
+"""
+
+[meta]
+min_tool_version = "1.0.0"
+docs = "https://templatr.io/crm-dashboard"
