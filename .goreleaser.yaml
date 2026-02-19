@@ -51,6 +51,7 @@ brews:
   - repository:
       owner: templatr
       name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     name: templatr-setup
     homepage: "https://templatr.io/tools/setup"
     description: "Template setup and dependency installer for Templatr templates"
@@ -62,6 +63,7 @@ scoops:
   - repository:
       owner: templatr
       name: scoop-bucket
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     name: templatr-setup
     homepage: "https://templatr.io/tools/setup"
     description: "Template setup and dependency installer for Templatr templates"
@@ -76,3 +78,4 @@ winget:
     repository:
       owner: templatr
       name: winget-pkgs
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"

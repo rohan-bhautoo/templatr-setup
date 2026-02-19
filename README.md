@@ -79,17 +79,17 @@ Install command: npm install
 
 ## Supported Runtimes
 
-| Runtime   | Source                          |
-|-----------|---------------------------------|
-| Node.js   | nodejs.org                      |
-| Python    | python-build-standalone         |
-| Flutter   | flutter.dev                     |
-| Java      | Adoptium (Temurin)              |
-| Go        | go.dev                          |
-| Rust      | rustup.rs                       |
-| Ruby      | ruby-builder                    |
-| PHP       | php.net                         |
-| .NET      | dot.net                         |
+| Runtime | Source                  |
+| ------- | ----------------------- |
+| Node.js | nodejs.org              |
+| Python  | python-build-standalone |
+| Flutter | flutter.dev             |
+| Java    | Adoptium (Temurin)      |
+| Go      | go.dev                  |
+| Rust    | rustup.rs               |
+| Ruby    | ruby-builder            |
+| PHP     | php.net                 |
+| .NET    | dot.net                 |
 
 All runtimes are downloaded from official sources and verified with SHA256 checksums.
 

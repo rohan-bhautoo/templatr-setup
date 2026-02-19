@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, develop]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
   test:
@@ -19,6 +19,19 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: cd web && npm ci
+
+      - name: Build web UI
+        run: cd web && npm run build
 
       - name: Build
         run: go build -v ./...
@@ -35,6 +48,19 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: cd web && npm ci
+
+      - name: Build web UI
+        run: cd web && npm run build
 
       - name: Run go vet
         run: go vet ./...
