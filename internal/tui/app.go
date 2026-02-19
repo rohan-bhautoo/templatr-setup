@@ -248,8 +248,8 @@ func (m Model) View() string {
 	case phaseConfirm:
 		b.WriteString(renderSummary(m.plan, width))
 		b.WriteString("\n")
-		b.WriteString(highlightStyle.Render("Proceed with installation? "))
-		b.WriteString(boldStyle.Render("[y/n] "))
+		prompt := highlightStyle.Render("Proceed with installation? ") + boldStyle.Render("[y/n]")
+		b.WriteString(activeBoxStyle.Render(prompt))
 
 	case phaseInstall:
 		b.WriteString(m.progressModel.View())
@@ -285,9 +285,9 @@ func (m Model) renderComplete() string {
 		b.WriteString("\n\n")
 
 		for _, r := range m.installResults {
-			b.WriteString(fmt.Sprintf("  %s %s %s %s %s\n",
+			b.WriteString(fmt.Sprintf("  %s %s%s %s %s\n",
 				successStyle.Render(iconCheck),
-				boldStyle.Render(r.Runtime),
+				tableCellStyle.Render(boldStyle.Render(r.Runtime)),
 				r.Version,
 				mutedStyle.Render(iconArrow),
 				mutedStyle.Render(r.InstallPath),
@@ -301,7 +301,7 @@ func (m Model) renderComplete() string {
 
 	if m.plan.Manifest.PostSetup.Message != "" && m.finalErr == nil {
 		b.WriteString("\n")
-		b.WriteString(strings.TrimSpace(m.plan.Manifest.PostSetup.Message))
+		b.WriteString(boxStyle.Render(strings.TrimSpace(m.plan.Manifest.PostSetup.Message)))
 		b.WriteString("\n")
 	}
 

@@ -141,8 +141,8 @@ func renderSummary(plan *engine.SetupPlan, width int) string {
 		if plan.Packages.ManagerFound {
 			status = successStyle.Render("available")
 		}
-		b.WriteString(fmt.Sprintf("Package manager: %s (%s)\n",
-			boldStyle.Render(plan.Packages.Manager), status))
+		b.WriteString(fmt.Sprintf("  %s Package manager: %s (%s)\n",
+			mutedStyle.Render(iconDot), boldStyle.Render(plan.Packages.Manager), status))
 	}
 
 	// Env vars info
@@ -153,7 +153,7 @@ func renderSummary(plan *engine.SetupPlan, width int) string {
 				required++
 			}
 		}
-		b.WriteString(fmt.Sprintf("Environment variables: %d total (%d required)\n", len(m.Env), required))
+		b.WriteString(fmt.Sprintf("  %s Environment variables: %d total (%d required)\n", mutedStyle.Render(iconDot), len(m.Env), required))
 	}
 
 	// Config files
@@ -162,7 +162,7 @@ func renderSummary(plan *engine.SetupPlan, width int) string {
 		for _, c := range m.Config {
 			totalFields += len(c.Fields)
 		}
-		b.WriteString(fmt.Sprintf("Config files: %d file(s), %d field(s)\n", len(m.Config), totalFields))
+		b.WriteString(fmt.Sprintf("  %s Config files: %d file(s), %d field(s)\n", mutedStyle.Render(iconDot), len(m.Config), totalFields))
 	}
 
 	return lipgloss.NewStyle().MaxWidth(width).Render(b.String())
