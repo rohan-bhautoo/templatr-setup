@@ -44,7 +44,7 @@ The GitHub Actions workflow (`.github/workflows/release.yml`) handles everything
 
 ## Build Targets
 
-GoReleaser produces 6 binaries, all statically linked (`CGO_ENABLED=0`) and stripped (`-s -w` ldflags):
+GoReleaser produces 6 binaries, all statically linked (`CGO_ENABLED=0`) and stripped (`-s -w` ldflags). Windows binaries additionally use `-H windowsgui` to suppress the console window on double-click (terminal detection is handled by `AttachConsole` and `GetConsoleProcessList` in `cmd/console_windows.go`):
 
 | OS      | Architecture | Archive Format | Archive Name                               |
 | ------- | ------------ | -------------- | ------------------------------------------ |

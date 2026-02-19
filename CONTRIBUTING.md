@@ -164,10 +164,20 @@ templatr-setup/
 The binary auto-detects how it was launched:
 
 - **Terminal with manifest**: Runs the interactive TUI (Bubbletea) in the terminal
-- **Terminal without manifest**: Opens the web dashboard (so you can drag-and-drop a manifest)
+- **Terminal without manifest**: Prints usage help (available commands and flags)
+- **Terminal with `--ui` flag**: Opens the web dashboard in the default browser
 - **Double-click (no terminal)**: Opens the web dashboard in the default browser
 
-Detection logic in `cmd/root.go`: `shouldLaunchWebUI()` returns `true` when `len(os.Args) == 1` AND no `.templatr.toml` exists in the current directory. On Windows, the binary is built with `-H windowsgui` linker flag to suppress the console window on double-click, and `AttachConsole(ATTACH_PARENT_PROCESS)` re-attaches stdout/stderr when run from cmd/PowerShell.
+Detection logic in `cmd/root.go`: `shouldLaunchWebUI()` returns `true` when `len(os.Args) == 1` AND `launchedFromConsole()` returns `false` (i.e., no terminal detected). The manifest presence is only checked inside cobra's `rootCmd.Run` after the terminal check passes.
+
+On Windows, terminal detection uses two methods in `cmd/console_windows.go`:
+
+1. `AttachConsole(ATTACH_PARENT_PROCESS)` — succeeds when run from cmd/PowerShell (for `-H windowsgui` release builds where the process starts without a console)
+2. `GetConsoleProcessList` fallback — if `AttachConsole` fails (console subsystem dev builds already have a console), checks if multiple processes share the console. Count > 1 means a parent shell exists (terminal); count of 1 means Windows created a fresh console (double-click)
+
+On Unix, `launchedFromConsole()` checks if stdin is a terminal via `term.IsTerminal()`.
+
+Release builds use `-H windowsgui` linker flag for Windows to suppress the console window on double-click. `AttachConsole` re-attaches stdout/stderr when run from cmd/PowerShell.
 
 ### Runtime Installation
 
@@ -252,19 +262,19 @@ Ruby, PHP, and .NET are currently stub installers that return error messages wit
 
 ## CLI Commands Reference
 
-| Command                          | Description                                            |
-| -------------------------------- | ------------------------------------------------------ |
-| `templatr-setup`                 | Auto-detect: TUI if terminal, web UI if double-clicked |
-| `templatr-setup setup`           | Install runtimes and packages from .templatr.toml      |
-| `templatr-setup setup --dry-run` | Show what would be installed without changes           |
-| `templatr-setup setup -y`        | Skip confirmation prompt                               |
-| `templatr-setup configure`       | Run only the configure step (.env + site.ts)           |
-| `templatr-setup doctor`          | Check system: installed runtimes, versions, PATH       |
-| `templatr-setup uninstall`       | Remove runtimes installed by this tool                 |
-| `templatr-setup uninstall --all` | Remove all without prompting                           |
-| `templatr-setup update`          | Self-update to latest version from GitHub Releases     |
-| `templatr-setup logs`            | Show recent log files                                  |
-| `templatr-setup version`         | Show version and check for updates                     |
+| Command                          | Description                                                               |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `templatr-setup`                 | TUI if manifest found, help text if no manifest, web UI if double-clicked |
+| `templatr-setup setup`           | Install runtimes and packages from .templatr.toml                         |
+| `templatr-setup setup --dry-run` | Show what would be installed without changes                              |
+| `templatr-setup setup -y`        | Skip confirmation prompt                                                  |
+| `templatr-setup configure`       | Run only the configure step (.env + site.ts)                              |
+| `templatr-setup doctor`          | Check system: installed runtimes, versions, PATH                          |
+| `templatr-setup uninstall`       | Remove runtimes installed by this tool                                    |
+| `templatr-setup uninstall --all` | Remove all without prompting                                              |
+| `templatr-setup update`          | Self-update to latest version from GitHub Releases                        |
+| `templatr-setup logs`            | Show recent log files                                                     |
+| `templatr-setup version`         | Show version and check for updates                                        |
 
 ## Key Technologies
 

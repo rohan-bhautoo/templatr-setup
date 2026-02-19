@@ -69,22 +69,22 @@ The dashboard communicates with the Go backend over WebSocket for real-time prog
 
 ## Commands
 
-| Command                          | Description                                                                                 |
-| -------------------------------- | ------------------------------------------------------------------------------------------- |
-| `templatr-setup`                 | Auto-detect mode: TUI if run from terminal with a manifest present, web dashboard otherwise |
-| `templatr-setup --ui`            | Force the web dashboard to open in your browser                                             |
-| `templatr-setup setup`           | Run the full setup flow (detect, install, configure)                                        |
-| `templatr-setup setup --dry-run` | Preview what would be installed without making changes                                      |
-| `templatr-setup setup -y`        | Skip the confirmation prompt and install immediately                                        |
-| `templatr-setup setup -f <path>` | Use a specific `.templatr.toml` file instead of auto-detecting                              |
-| `templatr-setup configure`       | Run only the configure step (`.env` and site config files)                                  |
-| `templatr-setup doctor`          | Show system info and all detected runtimes with versions                                    |
-| `templatr-setup uninstall`       | Remove all runtimes installed by this tool                                                  |
-| `templatr-setup uninstall --all` | Remove all without prompting for confirmation                                               |
-| `templatr-setup update`          | Self-update to the latest version from GitHub Releases                                      |
-| `templatr-setup version`         | Show version, build commit, build date, and check for updates                               |
-| `templatr-setup logs`            | List the 10 most recent log files                                                           |
-| `templatr-setup help`            | Show help text                                                                              |
+| Command                          | Description                                                                      |
+| -------------------------------- | -------------------------------------------------------------------------------- |
+| `templatr-setup`                 | TUI if manifest found, help text if no manifest, web dashboard if double-clicked |
+| `templatr-setup --ui`            | Force the web dashboard to open in your browser                                  |
+| `templatr-setup setup`           | Run the full setup flow (detect, install, configure)                             |
+| `templatr-setup setup --dry-run` | Preview what would be installed without making changes                           |
+| `templatr-setup setup -y`        | Skip the confirmation prompt and install immediately                             |
+| `templatr-setup setup -f <path>` | Use a specific `.templatr.toml` file instead of auto-detecting                   |
+| `templatr-setup configure`       | Run only the configure step (`.env` and site config files)                       |
+| `templatr-setup doctor`          | Show system info and all detected runtimes with versions                         |
+| `templatr-setup uninstall`       | Remove all runtimes installed by this tool                                       |
+| `templatr-setup uninstall --all` | Remove all without prompting for confirmation                                    |
+| `templatr-setup update`          | Self-update to the latest version from GitHub Releases                           |
+| `templatr-setup version`         | Show version, build commit, build date, and check for updates                    |
+| `templatr-setup logs`            | List the 10 most recent log files                                                |
+| `templatr-setup help`            | Show help text                                                                   |
 
 ### Global Flags
 
