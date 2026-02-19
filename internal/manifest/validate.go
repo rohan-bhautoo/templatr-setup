@@ -7,15 +7,15 @@ import (
 
 // validRuntimes is the set of runtimes the tool knows how to install.
 var validRuntimes = map[string]bool{
-	"node":   true,
-	"python": true,
+	"node":    true,
+	"python":  true,
 	"flutter": true,
-	"java":   true,
-	"go":     true,
-	"rust":   true,
-	"ruby":   true,
-	"php":    true,
-	"dotnet": true,
+	"java":    true,
+	"go":      true,
+	"rust":    true,
+	"ruby":    true,
+	"php":     true,
+	"dotnet":  true,
 }
 
 // validManagers is the set of supported package managers.
@@ -56,13 +56,13 @@ func Validate(m *Manifest) []error {
 	// Runtimes
 	for name := range m.Runtimes {
 		if !validRuntimes[strings.ToLower(name)] {
-			errs = append(errs, fmt.Errorf("[runtimes] unknown runtime %q — supported: %s", name, runtimeList()))
+			errs = append(errs, fmt.Errorf("[runtimes] unknown runtime %q - supported: %s", name, runtimeList()))
 		}
 	}
 
 	// Packages
 	if m.Packages.Manager != "" && !validManagers[m.Packages.Manager] {
-		errs = append(errs, fmt.Errorf("[packages] unknown manager %q — supported: %s", m.Packages.Manager, managerList()))
+		errs = append(errs, fmt.Errorf("[packages] unknown manager %q - supported: %s", m.Packages.Manager, managerList()))
 	}
 
 	// Env vars
@@ -71,7 +71,7 @@ func Validate(m *Manifest) []error {
 			errs = append(errs, fmt.Errorf("[env.%d] key is required", i))
 		}
 		if env.Type != "" && !validFieldTypes[env.Type] {
-			errs = append(errs, fmt.Errorf("[env.%d] unknown type %q — supported: %s", i, env.Type, fieldTypeList()))
+			errs = append(errs, fmt.Errorf("[env.%d] unknown type %q - supported: %s", i, env.Type, fieldTypeList()))
 		}
 	}
 

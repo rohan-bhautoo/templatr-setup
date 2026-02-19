@@ -22,12 +22,12 @@ const defaultPort = 19532
 // Server is the local HTTP server that serves the embedded web UI
 // and provides WebSocket/REST APIs for the setup wizard.
 type Server struct {
-	assets   embed.FS
-	log      *logger.Logger
+	assets         embed.FS
+	log            *logger.Logger
 	hub            *Hub
 	port           int
 	srv            *http.Server
-	manifestPath   string // path to manifest file (from --file flag)
+	manifestPath   string             // path to manifest file (from --file flag)
 	loadedManifest *manifest.Manifest // parsed manifest (from file or upload)
 }
 
@@ -116,7 +116,7 @@ func (s *Server) spaHandler() http.Handler {
 	// Try to get the web/dist subdirectory from the embedded FS
 	distFS, err := fs.Sub(s.assets, "web/dist")
 	if err != nil {
-		// No web/dist directory — return a fallback page
+		// No web/dist directory - return a fallback page
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
@@ -136,7 +136,7 @@ func (s *Server) spaHandler() http.Handler {
 		// Check if the file exists
 		f, err := distFS.Open(path[1:]) // strip leading /
 		if err != nil {
-			// File not found — serve index.html for SPA routing
+			// File not found - serve index.html for SPA routing
 			r.URL.Path = "/"
 			fileServer.ServeHTTP(w, r)
 			return

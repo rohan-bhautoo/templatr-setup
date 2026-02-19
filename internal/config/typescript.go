@@ -8,7 +8,7 @@ import (
 )
 
 // UpdateConfigFile reads a TypeScript/JavaScript config file and replaces
-// values for the given field paths. Uses regex-based pattern matching —
+// values for the given field paths. Uses regex-based pattern matching -
 // intentionally not a full AST parser.
 //
 // Paths like "siteConfig.name" are matched by finding the key "name"

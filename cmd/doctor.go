@@ -12,7 +12,7 @@ var doctorCmd = &cobra.Command{
 	Short: "Check system status: installed runtimes, versions, and PATH",
 	Long:  `Scans your system for installed runtimes and reports their versions, locations, and PATH status.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("templatr-setup doctor — System Health Check\n")
+		fmt.Printf("templatr-setup doctor - System Health Check\n")
 		fmt.Printf("Version: %s (commit: %s, built: %s)\n\n", versionStr, commitStr, dateStr)
 
 		sysInfo := detect.GetSystemInfo()

@@ -24,10 +24,10 @@ type adoptiumAsset struct {
 }
 
 type adoptiumBinary struct {
-	Architecture  string         `json:"architecture"`
-	ImageType     string         `json:"image_type"`
-	OS            string         `json:"os"`
-	Package       adoptiumPkg    `json:"package"`
+	Architecture string      `json:"architecture"`
+	ImageType    string      `json:"image_type"`
+	OS           string      `json:"os"`
+	Package      adoptiumPkg `json:"package"`
 }
 
 type adoptiumPkg struct {
@@ -128,7 +128,7 @@ func (j *JavaInstaller) Install(version, targetDir string, progress ProgressFunc
 		}
 	}
 
-	// Extract — Adoptium archives have a top-level jdk-* dir
+	// Extract - Adoptium archives have a top-level jdk-* dir
 	if err := ExtractAndFlatten(tmpFile, targetDir); err != nil {
 		return fmt.Errorf("failed to extract Java: %w", err)
 	}

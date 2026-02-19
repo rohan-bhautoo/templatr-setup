@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	kernel32       = syscall.NewLazyDLL("kernel32.dll")
-	procAttach     = kernel32.NewProc("AttachConsole")
+	kernel32   = syscall.NewLazyDLL("kernel32.dll")
+	procAttach = kernel32.NewProc("AttachConsole")
 )
 
 const attachParentProcess = ^uintptr(0) // ATTACH_PARENT_PROCESS = (DWORD)-1
@@ -18,7 +18,7 @@ const attachParentProcess = ^uintptr(0) // ATTACH_PARENT_PROCESS = (DWORD)-1
 func attachConsole() {
 	r, _, _ := procAttach.Call(attachParentProcess)
 	if r == 0 {
-		return // no parent console (double-clicked) — nothing to attach
+		return // no parent console (double-clicked) - nothing to attach
 	}
 
 	// Reopen stdout/stderr to the attached console

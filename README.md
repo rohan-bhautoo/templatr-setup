@@ -3,7 +3,7 @@
 A cross-platform CLI tool that reads `.templatr.toml` manifest files from [Templatr](https://templatr.co) templates and automatically installs all required runtimes, packages, and configuration.
 
 **For developers:** Run in your terminal for an interactive TUI experience.
-**For everyone else:** Double-click the downloaded file — a visual setup wizard opens in your browser. No terminal knowledge required.
+**For everyone else:** Double-click the downloaded file - a visual setup wizard opens in your browser. No terminal knowledge required.
 
 ## Installation
 
@@ -69,7 +69,7 @@ Template: SaaS Landing Page Template (business)
   Runtime     Required    Installed   Action
   ──────────  ──────────  ──────────  ────────
 ✓ Node.js     >=20.0.0    25.2.1      OK
-✗ Python      >=3.12.0    —           Install
+✗ Python      >=3.12.0    -           Install
 
 Actions needed: 1 to install
 
@@ -127,22 +127,22 @@ See the [examples/](examples/) directory for more manifest examples.
 
 ## How It Works
 
-1. **Parse** — Reads `.templatr.toml` and validates the manifest
-2. **Detect** — Scans your system for installed runtimes and their versions
-3. **Compare** — Checks installed versions against the manifest requirements using semver
-4. **Summarize** — Shows you exactly what will be installed before doing anything
-5. **Install** — Downloads and installs only what's missing to `~/.templatr/runtimes/`
-6. **Configure** — Helps you fill out `.env` and site configuration through interactive forms
-7. **Done** — Runs post-setup commands and you're ready to go
+1. **Parse** - Reads `.templatr.toml` and validates the manifest
+2. **Detect** - Scans your system for installed runtimes and their versions
+3. **Compare** - Checks installed versions against the manifest requirements using semver
+4. **Summarize** - Shows you exactly what will be installed before doing anything
+5. **Install** - Downloads and installs only what's missing to `~/.templatr/runtimes/`
+6. **Configure** - Helps you fill out `.env` and site configuration through interactive forms
+7. **Done** - Runs post-setup commands and you're ready to go
 
 ## Security
 
-- **Open source** — Inspect every line of code before running
-- **SHA256 checksums** — Every download is verified against official checksums
-- **Official sources only** — Runtimes are downloaded from nodejs.org, flutter.dev, go.dev, etc.
-- **No telemetry** — Zero data leaves your machine
-- **User-space installation** — Installs to `~/.templatr/runtimes/`, no root/admin required
-- **Reversible** — `templatr-setup uninstall` cleanly removes everything the tool installed
+- **Open source** - Inspect every line of code before running
+- **SHA256 checksums** - Every download is verified against official checksums
+- **Official sources only** - Runtimes are downloaded from nodejs.org, flutter.dev, go.dev, etc.
+- **No telemetry** - Zero data leaves your machine
+- **User-space installation** - Installs to `~/.templatr/runtimes/`, no root/admin required
+- **Reversible** - `templatr-setup uninstall` cleanly removes everything the tool installed
 
 ## Contributing
 

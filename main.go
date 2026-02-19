@@ -4,7 +4,7 @@ import (
 	"github.com/templatr/templatr-setup/cmd"
 )
 
-// Version info — injected by GoReleaser via ldflags.
+// Version info - injected by GoReleaser via ldflags.
 var (
 	version = "dev"
 	commit  = "none"

@@ -126,7 +126,7 @@ git status
 # Create a version tag (follow semver: major.minor.patch)
 git tag v1.0.0
 
-# Push the tag — this triggers the release workflow
+# Push the tag - this triggers the release workflow
 git push origin v1.0.0
 ```
 
@@ -134,10 +134,10 @@ git push origin v1.0.0
 
 **Versioning guidelines:**
 
-- `v1.0.0` — First stable release
-- `v1.1.0` — New features (backwards compatible)
-- `v1.1.1` — Bug fixes
-- `v2.0.0` — Breaking changes
+- `v1.0.0` - First stable release
+- `v1.1.0` - New features (backwards compatible)
+- `v1.1.1` - Bug fixes
+- `v2.0.0` - Breaking changes
 
 ## Conventions
 

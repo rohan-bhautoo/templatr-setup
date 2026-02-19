@@ -127,8 +127,8 @@ type Hub struct {
 	register   chan *Client
 	unregister chan *Client
 	mu         sync.Mutex
-	hadClients bool          // true once at least one client has connected
-	onEmpty    func()        // called when all clients disconnect after at least one connected
+	hadClients bool   // true once at least one client has connected
+	onEmpty    func() // called when all clients disconnect after at least one connected
 }
 
 // Client represents a single WebSocket connection.
@@ -221,7 +221,7 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	// Reader loop — process incoming messages
+	// Reader loop - process incoming messages
 	defer func() {
 		s.hub.unregister <- client
 		conn.CloseNow()

@@ -67,7 +67,7 @@ func detectRuntime(c runtimeCheck) RuntimeInfo {
 	// Find the binary on PATH.
 	path, err := exec.LookPath(c.Binary)
 	if err != nil {
-		// On Windows, python3 might not exist — try "python" as fallback.
+		// On Windows, python3 might not exist - try "python" as fallback.
 		if c.Binary == "python3" {
 			path, err = exec.LookPath("python")
 			if err != nil {
@@ -122,7 +122,7 @@ func isWindowsStub(output string) bool {
 func parseVersion(output string) string {
 	output = strings.TrimSpace(output)
 
-	// Handle multiline output — take first line only.
+	// Handle multiline output - take first line only.
 	if idx := strings.IndexByte(output, '\n'); idx != -1 {
 		output = output[:idx]
 	}

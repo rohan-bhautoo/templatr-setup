@@ -82,7 +82,7 @@ func runSetupCommand() {
 	// Dry run: print summary and exit
 	if dryRun {
 		engine.PrintSummary(plan)
-		fmt.Println("Dry run mode — no changes were made.")
+		fmt.Println("Dry run mode - no changes were made.")
 		return
 	}
 
@@ -104,13 +104,13 @@ func runSetupCommand() {
 
 // runSetupPlainText is the non-TUI fallback for non-interactive environments.
 func runSetupPlainText(plan *engine.SetupPlan, m *manifest.Manifest, log *logger.Logger) {
-	fmt.Println("templatr-setup — Template dependency installer")
+	fmt.Println("templatr-setup - Template dependency installer")
 	fmt.Printf("Version: %s\n\n", versionStr)
 
 	engine.PrintSummary(plan)
 
 	if !plan.NeedsAction() {
-		fmt.Println("Nothing to install — all requirements are satisfied.")
+		fmt.Println("Nothing to install - all requirements are satisfied.")
 		return
 	}
 

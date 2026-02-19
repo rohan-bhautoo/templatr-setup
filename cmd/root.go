@@ -85,19 +85,19 @@ func Execute() {
 			fmt.Fprintf(os.Stderr, "Run 'templatr-setup update' to upgrade, or visit https://templatr.io/tools/setup\n")
 		}
 	default:
-		// Don't wait — check hasn't finished yet, skip the notice
+		// Don't wait - check hasn't finished yet, skip the notice
 	}
 }
 
 // shouldLaunchWebUI checks if we should bypass cobra and launch the web UI.
 // Returns true when there are no CLI args (just the exe name) and no manifest
-// is available — the typical double-click scenario.
+// is available - the typical double-click scenario.
 func shouldLaunchWebUI() bool {
 	// If there are CLI args beyond the exe name, let cobra handle them
 	if len(os.Args) > 1 {
 		return false
 	}
-	// No args — check if there's a manifest for CLI mode
+	// No args - check if there's a manifest for CLI mode
 	return !hasManifestAvailable()
 }
 

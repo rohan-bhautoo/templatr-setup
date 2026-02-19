@@ -1,4 +1,4 @@
-# .templatr.toml — Django CRM Template
+# .templatr.toml - Django CRM Template
 
 [template]
 name = "CRM Dashboard Template"

@@ -126,7 +126,7 @@ func (f *FlutterInstaller) Install(version, targetDir string, progress ProgressF
 		}
 	}
 
-	// Extract — Flutter archive has a "flutter/" top-level dir
+	// Extract - Flutter archive has a "flutter/" top-level dir
 	if err := ExtractAndFlatten(tmpFile, targetDir); err != nil {
 		return fmt.Errorf("failed to extract Flutter: %w", err)
 	}
@@ -150,4 +150,3 @@ func flutterPlatform() string {
 		return "linux"
 	}
 }
-

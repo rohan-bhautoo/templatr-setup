@@ -1,4 +1,4 @@
-# .templatr.toml — Java Spring Boot CMS Template
+# .templatr.toml - Java Spring Boot CMS Template
 
 [template]
 name = "CMS Admin Panel"

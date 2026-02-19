@@ -273,10 +273,10 @@ func ExtractAndFlatten(archivePath, targetDir string) error {
 
 	var sourceDir string
 	if len(entries) == 1 && entries[0].IsDir() {
-		// Single top-level directory — flatten it
+		// Single top-level directory - flatten it
 		sourceDir = filepath.Join(tmpDir, entries[0].Name())
 	} else {
-		// No single top-level dir — use extracted contents directly
+		// No single top-level dir - use extracted contents directly
 		sourceDir = tmpDir
 	}
 
@@ -290,7 +290,7 @@ func ExtractAndFlatten(archivePath, targetDir string) error {
 
 	// Move source to target
 	if err := os.Rename(sourceDir, targetDir); err != nil {
-		// Rename can fail across filesystems — fall back to copy
+		// Rename can fail across filesystems - fall back to copy
 		return copyDir(sourceDir, targetDir)
 	}
 

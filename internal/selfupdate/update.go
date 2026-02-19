@@ -75,7 +75,7 @@ func CheckForUpdate(currentVersion string) *CheckResult {
 // DoUpdate performs the self-update to the latest version.
 func DoUpdate(currentVersion string) error {
 	if currentVersion == "dev" {
-		return fmt.Errorf("cannot update a development build — install a release version")
+		return fmt.Errorf("cannot update a development build - install a release version")
 	}
 
 	// Check if installed via package manager
@@ -249,13 +249,13 @@ func detectPackageManager() string {
 	exe = strings.ToLower(exe)
 
 	if strings.Contains(exe, "homebrew") || strings.Contains(exe, "linuxbrew") || strings.Contains(exe, "/cellar/") {
-		return "Homebrew — run 'brew upgrade templatr-setup'"
+		return "Homebrew - run 'brew upgrade templatr-setup'"
 	}
 	if strings.Contains(exe, "scoop") {
-		return "Scoop — run 'scoop update templatr-setup'"
+		return "Scoop - run 'scoop update templatr-setup'"
 	}
 	if strings.Contains(exe, "winget") || strings.Contains(exe, "windowsapps") {
-		return "winget — run 'winget upgrade Templatr.TemplatrSetup'"
+		return "winget - run 'winget upgrade Templatr.TemplatrSetup'"
 	}
 
 	return ""

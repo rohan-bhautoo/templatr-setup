@@ -24,7 +24,7 @@ git pull origin master
 # 2. Tag the release (follows semver)
 git tag -a v1.0.0 -m "v1.0.0"
 
-# 3. Push the tag — this triggers the release workflow
+# 3. Push the tag - this triggers the release workflow
 git push origin v1.0.0
 ```
 
@@ -61,7 +61,7 @@ Configure these in the repository Settings > Secrets and variables > Actions:
 
 | Secret             | Purpose                                               | Scope                           |
 | ------------------ | ----------------------------------------------------- | ------------------------------- |
-| `GITHUB_TOKEN`     | Automatic — creates the GitHub Release                | Built-in (no setup)             |
+| `GITHUB_TOKEN`     | Automatic - creates the GitHub Release                | Built-in (no setup)             |
 | `TAP_GITHUB_TOKEN` | PAT for pushing to homebrew-tap, scoop-bucket, winget | `repo` scope on `rohan-bhautoo` |
 
 ### Creating the TAP_GITHUB_TOKEN
@@ -93,7 +93,7 @@ The `/releases/latest` URL always redirects to the newest version.
 
 GoReleaser pushes an updated formula to `rohan-bhautoo/homebrew-tap` on every release.
 
-**One-time setup** — create the `rohan-bhautoo/homebrew-tap` repository:
+**One-time setup** - create the `rohan-bhautoo/homebrew-tap` repository:
 
 ```bash
 # Create the repo on GitHub (public, with a README)
@@ -110,7 +110,7 @@ brew install rohan-bhautoo/tap/templatr-setup
 
 GoReleaser pushes an updated manifest to `rohan-bhautoo/scoop-bucket` on every release.
 
-**One-time setup** — create the `rohan-bhautoo/scoop-bucket` repository:
+**One-time setup** - create the `rohan-bhautoo/scoop-bucket` repository:
 
 ```bash
 # Create the repo on GitHub (public, with a README)
@@ -128,7 +128,7 @@ scoop install templatr-setup
 
 GoReleaser pushes a manifest to `rohan-bhautoo/winget-pkgs` which can then be submitted to the official `microsoft/winget-pkgs` repository.
 
-**One-time setup** — create the `rohan-bhautoo/winget-pkgs` repository:
+**One-time setup** - create the `rohan-bhautoo/winget-pkgs` repository:
 
 ```bash
 gh repo create rohan-bhautoo/winget-pkgs --public --description "winget manifests for Templatr tools"
@@ -162,19 +162,19 @@ Development builds show `dev` as the version. Release builds show the actual ver
 
 Release notes are auto-generated from commit messages. Commits prefixed with `docs:`, `test:`, or `chore:` are excluded. Use conventional commit prefixes:
 
-- `feat:` — New features (included in changelog)
-- `fix:` — Bug fixes (included in changelog)
-- `refactor:` — Code changes (included in changelog)
-- `docs:` — Documentation only (excluded)
-- `test:` — Test changes (excluded)
-- `chore:` — Maintenance (excluded)
+- `feat:` - New features (included in changelog)
+- `fix:` - Bug fixes (included in changelog)
+- `refactor:` - Code changes (included in changelog)
+- `docs:` - Documentation only (excluded)
+- `test:` - Test changes (excluded)
+- `chore:` - Maintenance (excluded)
 
 ## Code Signing (Deferred)
 
 Code signing is not included in v1. Users installing via Homebrew, Scoop, or winget bypass OS security warnings. Direct downloads require a one-time bypass:
 
-- **Windows**: SmartScreen — click "More info" > "Run anyway"
-- **macOS**: Gatekeeper — run `xattr -d com.apple.quarantine templatr-setup`
+- **Windows**: SmartScreen - click "More info" > "Run anyway"
+- **macOS**: Gatekeeper - run `xattr -d com.apple.quarantine templatr-setup`
 
 Future signing options when revenue justifies the cost:
 
@@ -196,7 +196,7 @@ GoReleaser's before hooks automatically run `npm --prefix web ci` and `npm --pre
 
 The CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR:
 
-1. **Test** — Builds web UI, compiles Go, runs tests on all 3 OSes
-2. **Lint** — Runs `go vet` for static analysis
+1. **Test** - Builds web UI, compiles Go, runs tests on all 3 OSes
+2. **Lint** - Runs `go vet` for static analysis
 
 The release pipeline (`.github/workflows/release.yml`) runs only on version tags (`v*`).
