@@ -144,16 +144,37 @@ See the [examples/](examples/) directory for more manifest examples.
 - **User-space installation** — Installs to `~/.templatr/runtimes/`, no root/admin required
 - **Reversible** — `templatr-setup uninstall` cleanly removes everything the tool installed
 
+## Contributing
+
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m 'Add my feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
+
 ## Building from Source
 
-Requires [Go 1.26+](https://go.dev/dl/) and [Node.js 25+](https://nodejs.org/).
+Requires [Go 1.25+](https://go.dev/dl/) and [Node.js 20+](https://nodejs.org/).
 
 ```bash
 git clone https://github.com/templatr/templatr-setup.git
 cd templatr-setup
+
+# Build the web UI
+cd web && npm install && npm run build && cd ..
+
+# Build the binary
 go build -o templatr-setup .
+```
+
+### Running Tests
+
+```bash
+go test ./...
 ```
 
 ## License
 
-MIT
+[MIT](LICENSE)
