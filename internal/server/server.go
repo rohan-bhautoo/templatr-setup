@@ -7,7 +7,9 @@ import (
 	"io/fs"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
+	"os/signal"
 	"runtime"
 	"time"
 
@@ -70,8 +72,19 @@ func (s *Server) Start() error {
 	url := fmt.Sprintf("http://%s", addr)
 
 	s.log.Info("Starting web dashboard on %s", url)
-	fmt.Printf("\n  Web dashboard: %s\n\n", url)
-	fmt.Println("  Press Ctrl+C to stop the server.")
+
+	// Shut down when all browser tabs disconnect or on OS signal
+	s.hub.onEmpty = func() {
+		s.log.Info("All clients disconnected, shutting down")
+		go s.Shutdown()
+	}
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	go func() {
+		<-sigCh
+		s.Shutdown()
+	}()
 
 	// Open browser after a short delay to let server start
 	go func() {
@@ -135,7 +148,7 @@ func (s *Server) spaHandler() http.Handler {
 }
 
 // handleStatus returns a simple health check response.
-func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleStatus(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, `{"status":"ok","manifest":"%s"}`, s.manifestPath)
 }

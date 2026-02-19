@@ -127,6 +127,8 @@ type Hub struct {
 	register   chan *Client
 	unregister chan *Client
 	mu         sync.Mutex
+	hadClients bool          // true once at least one client has connected
+	onEmpty    func()        // called when all clients disconnect after at least one connected
 }
 
 // Client represents a single WebSocket connection.
@@ -152,6 +154,7 @@ func (h *Hub) Run() {
 		case client := <-h.register:
 			h.mu.Lock()
 			h.clients[client] = true
+			h.hadClients = true
 			h.mu.Unlock()
 
 		case client := <-h.unregister:
@@ -160,7 +163,13 @@ func (h *Hub) Run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
+			empty := h.hadClients && len(h.clients) == 0
+			onEmpty := h.onEmpty
 			h.mu.Unlock()
+
+			if empty && onEmpty != nil {
+				onEmpty()
+			}
 
 		case msg := <-h.broadcast:
 			h.mu.Lock()
@@ -303,7 +312,7 @@ func (s *Server) validateAndBroadcastPlan(m *manifest.Manifest) {
 }
 
 // handleClientMessage processes a message from a web UI client.
-func (s *Server) handleClientMessage(client *Client, msg ClientMessage) {
+func (s *Server) handleClientMessage(_ *Client, msg ClientMessage) {
 	switch msg.Type {
 	case "load_manifest":
 		if msg.ManifestContent != "" {

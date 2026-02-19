@@ -141,7 +141,7 @@ func launchWebUI() {
 	}
 }
 
-func runSetup(cmd *cobra.Command, args []string) {
+func runSetup(_ *cobra.Command, _ []string) {
 	// When invoked via the root command (no subcommand), run setup
 	runSetupCommand()
 }
