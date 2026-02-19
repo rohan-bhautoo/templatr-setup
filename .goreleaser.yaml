@@ -2,11 +2,12 @@ version: 2
 
 before:
   hooks:
-    - bash -c "cd web && npm ci && NODE_ENV=production npm run build"
+    - npm --prefix web ci
+    - npm --prefix web run build
 
 builds:
   - id: templatr-setup
-    main: ./main.go
+    main: .
     binary: templatr-setup
     env:
       - CGO_ENABLED=0
