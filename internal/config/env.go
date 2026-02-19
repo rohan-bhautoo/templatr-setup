@@ -8,6 +8,49 @@ import (
 	"github.com/templatr/templatr-setup/internal/manifest"
 )
 
+// EnvFileTarget returns the target file path for an env var.
+// If the env var has no File field set, it defaults to ".env".
+func EnvFileTarget(env manifest.EnvVar) string {
+	if env.File != "" {
+		return env.File
+	}
+	return ".env"
+}
+
+// GroupEnvByFile groups env vars by their target file.
+// Returns a map of file path -> env vars, and an ordered list of unique file paths.
+func GroupEnvByFile(envDefs []manifest.EnvVar) (map[string][]manifest.EnvVar, []string) {
+	grouped := make(map[string][]manifest.EnvVar)
+	var order []string
+	seen := make(map[string]bool)
+
+	for _, env := range envDefs {
+		target := EnvFileTarget(env)
+		if !seen[target] {
+			order = append(order, target)
+			seen[target] = true
+		}
+		grouped[target] = append(grouped[target], env)
+	}
+
+	return grouped, order
+}
+
+// WriteEnvFiles writes env vars to their respective target files.
+// It groups vars by their File field and writes each group to the corresponding file.
+func WriteEnvFiles(envDefs []manifest.EnvVar, values map[string]string) error {
+	grouped, order := GroupEnvByFile(envDefs)
+
+	for _, file := range order {
+		defs := grouped[file]
+		if err := WriteEnvFile(file, defs, values); err != nil {
+			return fmt.Errorf("writing %s: %w", file, err)
+		}
+	}
+
+	return nil
+}
+
 // WriteEnvFile writes a .env file with the given values.
 // It preserves field order from the manifest and adds comments.
 func WriteEnvFile(path string, envDefs []manifest.EnvVar, values map[string]string) error {

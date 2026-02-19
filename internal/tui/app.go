@@ -376,7 +376,7 @@ func (m Model) writeConfigCmd() tea.Cmd {
 	log := m.log
 
 	return func() tea.Msg {
-		// Write .env
+		// Write env files (grouped by target file)
 		envVals := make(map[string]string)
 		for _, env := range mf.Env {
 			if v, ok := vals[env.Key]; ok {
@@ -384,9 +384,9 @@ func (m Model) writeConfigCmd() tea.Cmd {
 			}
 		}
 		if len(envVals) > 0 {
-			log.Info("Writing .env file...")
-			if err := config.WriteEnvFile(".env", mf.Env, envVals); err != nil {
-				return configDoneMsg{err: fmt.Errorf("failed to write .env: %w", err)}
+			log.Info("Writing env files...")
+			if err := config.WriteEnvFiles(mf.Env, envVals); err != nil {
+				return configDoneMsg{err: fmt.Errorf("failed to write env files: %w", err)}
 			}
 		}
 

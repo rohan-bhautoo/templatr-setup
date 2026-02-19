@@ -167,6 +167,7 @@ Each `[[env]]` entry defines an environment variable that the tool will prompt t
 | `required`    | bool   | No       | Whether this variable must have a value          |
 | `type`        | string | No       | Field type for input rendering and validation    |
 | `docs_url`    | string | No       | Link to documentation for getting this value     |
+| `file`        | string | No       | Target env file path (default: `.env`)           |
 
 **Validation**: `key` must be non-empty. `type`, if provided, must be one of the [field types](#field-types).
 
@@ -195,6 +196,34 @@ description = "Enable debug mode (disable in production)"
 default = "true"
 required = false
 type = "boolean"
+```
+
+#### Multiple Env Files
+
+Use the `file` field to target different env files. Variables without a `file` field default to `.env`. The tool groups variables by file and writes each file separately, with a section header in the TUI and web UI for each file.
+
+```toml
+# Written to .env (default)
+[[env]]
+key = "NEXT_PUBLIC_SITE_URL"
+label = "Site URL"
+default = "http://localhost:3000"
+type = "url"
+
+# Written to .env.production
+[[env]]
+key = "NEXT_PUBLIC_SITE_URL"
+file = ".env.production"
+label = "Production Site URL"
+default = "https://your-domain.com"
+type = "url"
+
+# Written to .env.production
+[[env]]
+key = "DATABASE_URL"
+file = ".env.production"
+label = "Production Database URL"
+type = "secret"
 ```
 
 #### Generated `.env` Output

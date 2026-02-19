@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/templatr/templatr-setup/internal/config"
 	"github.com/templatr/templatr-setup/internal/manifest"
 )
 
@@ -31,7 +32,7 @@ type configureModel struct {
 func newConfigureModel(m *manifest.Manifest) configureModel {
 	var fields []configField
 
-	// .env fields
+	// .env fields (grouped by target file)
 	for _, env := range m.Env {
 		ti := textinput.New()
 		ti.Placeholder = env.Default
@@ -47,13 +48,14 @@ func newConfigureModel(m *manifest.Manifest) configureModel {
 			ti.SetValue(env.Default)
 		}
 
+		target := config.EnvFileTarget(env)
 		fields = append(fields, configField{
 			key:         env.Key,
 			label:       env.Label,
 			description: env.Description,
 			fieldType:   env.Type,
 			required:    env.Required,
-			section:     "Environment Variables (.env)",
+			section:     fmt.Sprintf("Environment Variables (%s)", target),
 			input:       ti,
 		})
 	}

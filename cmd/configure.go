@@ -46,19 +46,35 @@ func runConfigure() {
 		return
 	}
 
-	// Read existing .env values to pre-fill
-	existingEnv, _ := config.ReadEnvFile(".env")
+	// Read existing env values from all target files to pre-fill
+	existingEnv := make(map[string]string)
+	grouped, fileOrder := config.GroupEnvByFile(m.Env)
+	for _, file := range fileOrder {
+		existing, _ := config.ReadEnvFile(file)
+		for k, v := range existing {
+			existingEnv[k] = v
+		}
+	}
 
 	// Plain text interactive mode
 	reader := bufio.NewReader(os.Stdin)
 	envValues := make(map[string]string)
 
 	if len(m.Env) > 0 {
-		fmt.Println("Environment Variables (.env)")
-		fmt.Println(strings.Repeat("─", 40))
-		fmt.Println()
-
+		currentFile := ""
 		for _, env := range m.Env {
+			// Show file header when switching to a new target file
+			target := config.EnvFileTarget(env)
+			if target != currentFile {
+				if currentFile != "" {
+					fmt.Println()
+				}
+				currentFile = target
+				fmt.Printf("Environment Variables (%s)\n", target)
+				fmt.Println(strings.Repeat("─", 40))
+				fmt.Println()
+			}
+
 			defaultVal := env.Default
 			if existing, ok := existingEnv[env.Key]; ok && existing != "" {
 				defaultVal = existing
@@ -87,12 +103,15 @@ func runConfigure() {
 			fmt.Println()
 		}
 
-		log.Info("Writing .env file...")
-		if err := config.WriteEnvFile(".env", m.Env, envValues); err != nil {
-			fmt.Fprintf(os.Stderr, "Error writing .env: %s\n", err)
-			os.Exit(1)
+		log.Info("Writing env files...")
+		for _, file := range fileOrder {
+			defs := grouped[file]
+			if err := config.WriteEnvFile(file, defs, envValues); err != nil {
+				fmt.Fprintf(os.Stderr, "Error writing %s: %s\n", file, err)
+				os.Exit(1)
+			}
+			fmt.Printf("  ✓ %s written\n", file)
 		}
-		fmt.Println("  ✓ .env file written")
 	}
 
 	// Config files

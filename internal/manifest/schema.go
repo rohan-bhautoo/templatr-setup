@@ -27,7 +27,7 @@ type PackageConfig struct {
 	Global         []string `toml:"global,omitempty"`
 }
 
-// EnvVar defines a single environment variable for the .env file.
+// EnvVar defines a single environment variable for an env file.
 type EnvVar struct {
 	Key         string `toml:"key"`
 	Label       string `toml:"label"`
@@ -36,6 +36,7 @@ type EnvVar struct {
 	Required    bool   `toml:"required"`
 	Type        string `toml:"type"` // text, url, email, secret, number, boolean
 	DocsURL     string `toml:"docs_url,omitempty"`
+	File        string `toml:"file,omitempty"` // Target env file (default: ".env")
 }
 
 // ConfigFile defines a configuration file to edit (e.g., site.ts).

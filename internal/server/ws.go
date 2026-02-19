@@ -90,6 +90,7 @@ type EnvVarData struct {
 	Required    bool   `json:"required"`
 	Type        string `json:"type"`
 	DocsURL     string `json:"docsUrl,omitempty"`
+	File        string `json:"file,omitempty"`
 }
 
 // ConfigData is a config file definition for the web UI form.
@@ -437,10 +438,8 @@ func (s *Server) runConfigure(msg ClientMessage) {
 		return
 	}
 
-	// Write .env file
+	// Write env files (grouped by target file)
 	if len(msg.Env) > 0 && len(m.Env) > 0 {
-		s.hub.Broadcast(ServerMessage{Type: MsgTypeLog, Level: "info", Message: "Writing .env file..."})
-
 		// Mask secrets
 		for _, envDef := range m.Env {
 			if envDef.Type == "secret" {
@@ -450,8 +449,13 @@ func (s *Server) runConfigure(msg ClientMessage) {
 			}
 		}
 
-		if err := config.WriteEnvFile(".env", m.Env, msg.Env); err != nil {
-			s.hub.Broadcast(ServerMessage{Type: MsgTypeLog, Level: "error", Message: fmt.Sprintf("Failed to write .env: %s", err)})
+		grouped, fileOrder := config.GroupEnvByFile(m.Env)
+		for _, file := range fileOrder {
+			s.hub.Broadcast(ServerMessage{Type: MsgTypeLog, Level: "info", Message: fmt.Sprintf("Writing %s...", file)})
+			defs := grouped[file]
+			if err := config.WriteEnvFile(file, defs, msg.Env); err != nil {
+				s.hub.Broadcast(ServerMessage{Type: MsgTypeLog, Level: "error", Message: fmt.Sprintf("Failed to write %s: %s", file, err)})
+			}
 		}
 	}
 
@@ -537,6 +541,7 @@ func buildPlanData(plan *engine.SetupPlan) *PlanData {
 			Required:    env.Required,
 			Type:        env.Type,
 			DocsURL:     env.DocsURL,
+			File:        env.File,
 		})
 	}
 
