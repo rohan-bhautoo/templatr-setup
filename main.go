@@ -1,6 +1,8 @@
 package main
 
-import "github.com/templatr/templatr-setup/cmd"
+import (
+	"github.com/templatr/templatr-setup/cmd"
+)
 
 // Version info — injected by GoReleaser via ldflags.
 var (

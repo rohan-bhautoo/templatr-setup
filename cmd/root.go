@@ -4,9 +4,11 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/templatr/templatr-setup/internal/logger"
+	"github.com/templatr/templatr-setup/internal/manifest"
 	"github.com/templatr/templatr-setup/internal/selfupdate"
 	"github.com/templatr/templatr-setup/internal/server"
 	"golang.org/x/term"
@@ -44,7 +46,7 @@ For developers: run in your terminal for an interactive TUI experience.
 For everyone else: double-click the downloaded file to open the visual
 web dashboard in your browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if uiFlag || !isTerminal() {
+		if uiFlag || !hasManifestAvailable() {
 			launchWebUI()
 			return
 		}
@@ -54,6 +56,17 @@ web dashboard in your browser.`,
 
 // Execute is the entry point called from main.
 func Execute() {
+	// If no subcommand and no manifest available, skip cobra entirely
+	// and launch the web UI directly. This handles double-click from Explorer
+	// where cobra may not behave as expected.
+	if shouldLaunchWebUI() {
+		launchWebUI()
+		return
+	}
+
+	// Attach to parent console for CLI output (needed with -H windowsgui on Windows)
+	attachConsole()
+
 	// Non-blocking update check (runs in background, prints notice after command)
 	updateCh := make(chan *selfupdate.CheckResult, 1)
 	go func() {
@@ -76,13 +89,39 @@ func Execute() {
 	}
 }
 
+// shouldLaunchWebUI checks if we should bypass cobra and launch the web UI.
+// Returns true when there are no CLI args (just the exe name) and no manifest
+// is available — the typical double-click scenario.
+func shouldLaunchWebUI() bool {
+	// If there are CLI args beyond the exe name, let cobra handle them
+	if len(os.Args) > 1 {
+		return false
+	}
+	// No args — check if there's a manifest for CLI mode
+	return !hasManifestAvailable()
+}
+
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&uiFlag, "ui", false, "Launch the visual web dashboard in your browser")
 	rootCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Path to .templatr.toml manifest file")
 }
 
+// hasManifestAvailable checks if a manifest file is available for CLI mode.
+// Returns true if --file was specified or .templatr.toml exists in the CWD.
+// When false, the web UI is launched instead (e.g. double-click from Explorer).
+func hasManifestAvailable() bool {
+	if manifestFile != "" {
+		return true
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return false
+	}
+	_, err = os.Stat(filepath.Join(cwd, manifest.DefaultManifestName))
+	return err == nil
+}
+
 // isTerminal checks if stdin is connected to a terminal.
-// Returns false when the binary is double-clicked (no terminal attached).
 func isTerminal() bool {
 	return term.IsTerminal(int(os.Stdin.Fd()))
 }
