@@ -43,7 +43,7 @@ func renderSummary(plan *engine.SetupPlan, width int) string {
 		}
 		cur := r.InstalledVersion
 		if cur == "" {
-			cur = "—"
+			cur = "-"
 		}
 		if len(cur) > curW {
 			curW = len(cur)
@@ -78,7 +78,7 @@ func renderSummary(plan *engine.SetupPlan, width int) string {
 	for _, r := range plan.Runtimes {
 		cur := r.InstalledVersion
 		if cur == "" {
-			cur = "—"
+			cur = "-"
 		}
 
 		var icon string

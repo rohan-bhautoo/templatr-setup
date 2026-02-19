@@ -31,7 +31,7 @@ func PrintSummary(plan *SetupPlan) {
 		}
 		cur := r.InstalledVersion
 		if cur == "" {
-			cur = "—"
+			cur = "-"
 		}
 		if len(cur) > curW {
 			curW = len(cur)
@@ -55,7 +55,7 @@ func PrintSummary(plan *SetupPlan) {
 	for _, r := range plan.Runtimes {
 		cur := r.InstalledVersion
 		if cur == "" {
-			cur = "—"
+			cur = "-"
 		}
 
 		icon := "  "
