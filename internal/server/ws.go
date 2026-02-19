@@ -273,11 +273,49 @@ func (s *Server) loadManifestAndSendPlan(path string) {
 	})
 }
 
+// loadManifestFromContent parses uploaded TOML content and broadcasts the plan.
+func (s *Server) loadManifestFromContent(content string) {
+	m, err := manifest.Parse([]byte(content))
+	if err != nil {
+		s.hub.Broadcast(ServerMessage{
+			Type:    MsgTypeError,
+			Message: fmt.Sprintf("Failed to parse manifest: %s", err),
+		})
+		return
+	}
+
+	if errs := manifest.Validate(m); len(errs) > 0 {
+		s.hub.Broadcast(ServerMessage{
+			Type:    MsgTypeError,
+			Message: fmt.Sprintf("Manifest validation failed: %s", errs[0]),
+		})
+		return
+	}
+
+	plan, err := engine.BuildPlan(m)
+	if err != nil {
+		s.hub.Broadcast(ServerMessage{
+			Type:    MsgTypeError,
+			Message: fmt.Sprintf("Failed to build plan: %s", err),
+		})
+		return
+	}
+
+	s.hub.Broadcast(ServerMessage{
+		Type: MsgTypePlan,
+		Plan: buildPlanData(plan),
+	})
+}
+
 // handleClientMessage processes a message from a web UI client.
 func (s *Server) handleClientMessage(client *Client, msg ClientMessage) {
 	switch msg.Type {
 	case "load_manifest":
-		go s.loadManifestAndSendPlan(msg.ManifestPath)
+		if msg.ManifestContent != "" {
+			go s.loadManifestFromContent(msg.ManifestContent)
+		} else {
+			go s.loadManifestAndSendPlan(msg.ManifestPath)
+		}
 
 	case "confirm":
 		go s.runInstallation(msg.ManifestPath)

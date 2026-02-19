@@ -44,6 +44,9 @@ function App() {
               state.setStep("summary");
             }
           }}
+          onLoadManifest={(content) => {
+            send({ type: "load_manifest", manifestContent: content });
+          }}
         />
       )}
 

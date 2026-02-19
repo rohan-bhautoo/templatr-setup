@@ -16,10 +16,16 @@ import {
 interface WelcomeStepProps {
   hasManifest: boolean;
   onContinue: () => void;
+  onLoadManifest: (content: string) => void;
 }
 
-export function WelcomeStep({ hasManifest, onContinue }: WelcomeStepProps) {
+export function WelcomeStep({
+  hasManifest,
+  onContinue,
+  onLoadManifest,
+}: WelcomeStepProps) {
   const [dragging, setDragging] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -31,10 +37,29 @@ export function WelcomeStep({ hasManifest, onContinue }: WelcomeStepProps) {
     setDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-  }, []);
+  const handleFile = useCallback(
+    (file: File) => {
+      setFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          onLoadManifest(reader.result);
+        }
+      };
+      reader.readAsText(file);
+    },
+    [onLoadManifest]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] gap-8 px-4">
@@ -70,6 +95,14 @@ export function WelcomeStep({ hasManifest, onContinue }: WelcomeStepProps) {
                 </p>
               </div>
             </div>
+          ) : fileName ? (
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20">
+              <IconFileDescription className="size-5 text-primary" />
+              <div>
+                <p className="font-medium text-sm">Uploaded</p>
+                <p className="text-xs text-muted-foreground">{fileName}</p>
+              </div>
+            </div>
           ) : (
             <div
               onDragOver={handleDragOver}
@@ -95,6 +128,10 @@ export function WelcomeStep({ hasManifest, onContinue }: WelcomeStepProps) {
                 type="file"
                 accept=".toml"
                 className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFile(file);
+                }}
               />
             </div>
           )}

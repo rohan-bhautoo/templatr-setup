@@ -36,3 +36,12 @@ func Load(path string) (*Manifest, error) {
 
 	return &m, nil
 }
+
+// Parse parses raw TOML content into a Manifest.
+func Parse(data []byte) (*Manifest, error) {
+	var m Manifest
+	if err := toml.Unmarshal(data, &m); err != nil {
+		return nil, fmt.Errorf("failed to parse manifest: %w", err)
+	}
+	return &m, nil
+}
