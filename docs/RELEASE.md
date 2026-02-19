@@ -187,14 +187,10 @@ Future signing options when revenue justifies the cost:
 Use GoReleaser's snapshot mode to test the build without publishing:
 
 ```bash
-# Build web UI first
-cd web && npm ci && npm run build && cd ..
-
-# Dry-run release (no publish)
 goreleaser release --snapshot --clean
 ```
 
-This creates all archives in the `dist/` directory without pushing anything.
+GoReleaser's before hooks automatically run `npm --prefix web ci` and `npm --prefix web run build`. This creates all archives in the `dist/` directory without pushing anything.
 
 ## CI Workflow
 
