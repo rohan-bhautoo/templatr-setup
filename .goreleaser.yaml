@@ -2,9 +2,7 @@ version: 2
 
 before:
   hooks:
-    - cmd: bash -c "cd web && npm ci && npm run build"
-      env:
-        - NODE_ENV=production
+    - bash -c "cd web && npm ci && NODE_ENV=production npm run build"
 
 builds:
   - id: templatr-setup
@@ -49,7 +47,7 @@ changelog:
 
 brews:
   - repository:
-      owner: templatr
+      owner: rohan-bhautoo
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     name: templatr-setup
@@ -61,7 +59,7 @@ brews:
 
 scoops:
   - repository:
-      owner: templatr
+      owner: rohan-bhautoo
       name: scoop-bucket
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     name: templatr-setup
@@ -76,6 +74,6 @@ winget:
     homepage: "https://templatr.io/tools/setup"
     license: "MIT"
     repository:
-      owner: templatr
+      owner: rohan-bhautoo
       name: winget-pkgs
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"

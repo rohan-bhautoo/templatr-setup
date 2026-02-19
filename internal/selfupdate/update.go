@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	repoOwner       = "templatr"
+	repoOwner       = "rohan-bhautoo"
 	repoName        = "templatr-setup"
 	checkCooldown   = 24 * time.Hour
 	checkFile       = ".templatr/last_update_check"

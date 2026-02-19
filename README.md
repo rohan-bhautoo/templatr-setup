@@ -10,13 +10,13 @@ A cross-platform CLI tool that reads `.templatr.toml` manifest files from [Templ
 ### macOS / Linux
 
 ```bash
-brew install templatr/tap/templatr-setup
+brew install rohan-bhautoo/tap/templatr-setup
 ```
 
 ### Windows
 
 ```bash
-scoop bucket add templatr https://github.com/templatr/scoop-bucket
+scoop bucket add templatr https://github.com/rohan-bhautoo/scoop-bucket
 scoop install templatr-setup
 ```
 
@@ -28,7 +28,7 @@ winget install Templatr.TemplatrSetup
 
 ### Direct Download
 
-Download the latest release for your OS from the [Releases](https://github.com/templatr/templatr-setup/releases/latest) page.
+Download the latest release for your OS from the [Releases](https://github.com/rohan-bhautoo/templatr-setup/releases/latest) page.
 
 ## Quick Start
 
@@ -159,7 +159,7 @@ Contributions are welcome! Please open an issue first to discuss what you'd like
 Requires [Go 1.25+](https://go.dev/dl/) and [Node.js 20+](https://nodejs.org/).
 
 ```bash
-git clone https://github.com/templatr/templatr-setup.git
+git clone https://github.com/rohan-bhautoo/templatr-setup.git
 cd templatr-setup
 
 # Build the web UI

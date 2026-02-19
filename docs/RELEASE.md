@@ -59,10 +59,10 @@ Get-FileHash templatr-setup_1.0.0_windows_amd64.zip -Algorithm SHA256
 
 Configure these in the repository Settings > Secrets and variables > Actions:
 
-| Secret             | Purpose                                               | Scope                          |
-| ------------------ | ----------------------------------------------------- | ------------------------------ |
-| `GITHUB_TOKEN`     | Automatic — creates the GitHub Release                | Built-in (no setup)            |
-| `TAP_GITHUB_TOKEN` | PAT for pushing to homebrew-tap, scoop-bucket, winget | `repo` scope on `templatr` org |
+| Secret             | Purpose                                               | Scope                           |
+| ------------------ | ----------------------------------------------------- | ------------------------------- |
+| `GITHUB_TOKEN`     | Automatic — creates the GitHub Release                | Built-in (no setup)             |
+| `TAP_GITHUB_TOKEN` | PAT for pushing to homebrew-tap, scoop-bucket, winget | `repo` scope on `rohan-bhautoo` |
 
 ### Creating the TAP_GITHUB_TOKEN
 
@@ -70,10 +70,10 @@ Configure these in the repository Settings > Secrets and variables > Actions:
 2. Create a new Personal Access Token with:
    - **Classic token**: `repo` scope (full control of private repositories)
    - **Fine-grained token**: Read/Write access to `Contents` on:
-     - `templatr/homebrew-tap`
-     - `templatr/scoop-bucket`
-     - `templatr/winget-pkgs`
-3. Add it as a repository secret named `TAP_GITHUB_TOKEN` in `templatr/templatr-setup`
+     - `rohan-bhautoo/homebrew-tap`
+     - `rohan-bhautoo/scoop-bucket`
+     - `rohan-bhautoo/winget-pkgs`
+3. Add it as a repository secret named `TAP_GITHUB_TOKEN` in `rohan-bhautoo/templatr-setup`
 
 ## Distribution Channels
 
@@ -82,60 +82,60 @@ Configure these in the repository Settings > Secrets and variables > Actions:
 Direct download links follow this pattern:
 
 ```
-https://github.com/templatr/templatr-setup/releases/latest
-https://github.com/templatr/templatr-setup/releases/download/v1.0.0/templatr-setup_1.0.0_windows_amd64.zip
-https://github.com/templatr/templatr-setup/releases/download/v1.0.0/templatr-setup_1.0.0_darwin_arm64.tar.gz
+https://github.com/rohan-bhautoo/templatr-setup/releases/latest
+https://github.com/rohan-bhautoo/templatr-setup/releases/download/v1.0.0/templatr-setup_1.0.0_windows_amd64.zip
+https://github.com/rohan-bhautoo/templatr-setup/releases/download/v1.0.0/templatr-setup_1.0.0_darwin_arm64.tar.gz
 ```
 
 The `/releases/latest` URL always redirects to the newest version.
 
 ### Homebrew (automatic)
 
-GoReleaser pushes an updated formula to `templatr/homebrew-tap` on every release.
+GoReleaser pushes an updated formula to `rohan-bhautoo/homebrew-tap` on every release.
 
-**One-time setup** — create the `templatr/homebrew-tap` repository:
+**One-time setup** — create the `rohan-bhautoo/homebrew-tap` repository:
 
 ```bash
 # Create the repo on GitHub (public, with a README)
-gh repo create templatr/homebrew-tap --public --description "Homebrew tap for Templatr tools"
+gh repo create rohan-bhautoo/homebrew-tap --public --description "Homebrew tap for Templatr tools"
 ```
 
 Users install via:
 
 ```bash
-brew install templatr/tap/templatr-setup
+brew install rohan-bhautoo/tap/templatr-setup
 ```
 
 ### Scoop (automatic)
 
-GoReleaser pushes an updated manifest to `templatr/scoop-bucket` on every release.
+GoReleaser pushes an updated manifest to `rohan-bhautoo/scoop-bucket` on every release.
 
-**One-time setup** — create the `templatr/scoop-bucket` repository:
+**One-time setup** — create the `rohan-bhautoo/scoop-bucket` repository:
 
 ```bash
 # Create the repo on GitHub (public, with a README)
-gh repo create templatr/scoop-bucket --public --description "Scoop bucket for Templatr tools"
+gh repo create rohan-bhautoo/scoop-bucket --public --description "Scoop bucket for Templatr tools"
 ```
 
 Users install via:
 
 ```bash
-scoop bucket add templatr https://github.com/templatr/scoop-bucket
+scoop bucket add templatr https://github.com/rohan-bhautoo/scoop-bucket
 scoop install templatr-setup
 ```
 
 ### winget (automatic)
 
-GoReleaser pushes a manifest to `templatr/winget-pkgs` which can then be submitted to the official `microsoft/winget-pkgs` repository.
+GoReleaser pushes a manifest to `rohan-bhautoo/winget-pkgs` which can then be submitted to the official `microsoft/winget-pkgs` repository.
 
-**One-time setup** — create the `templatr/winget-pkgs` repository:
+**One-time setup** — create the `rohan-bhautoo/winget-pkgs` repository:
 
 ```bash
-gh repo create templatr/winget-pkgs --public --description "winget manifests for Templatr tools"
+gh repo create rohan-bhautoo/winget-pkgs --public --description "winget manifests for Templatr tools"
 ```
 
 **Submitting to official winget repository:**
-After the first release, manually submit a PR from `templatr/winget-pkgs` to `microsoft/winget-pkgs`. Subsequent releases can use [wingetcreate](https://github.com/microsoft/winget-create) to automate updates.
+After the first release, manually submit a PR from `rohan-bhautoo/winget-pkgs` to `microsoft/winget-pkgs`. Subsequent releases can use [wingetcreate](https://github.com/microsoft/winget-create) to automate updates.
 
 Users install via:
 
