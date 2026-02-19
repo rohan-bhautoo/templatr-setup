@@ -24,7 +24,6 @@ Values are written directly to the template files.`,
 }
 
 func init() {
-	configureCmd.Flags().StringVarP(&manifestFile, "file", "f", "", "Path to .templatr.toml manifest file")
 	rootCmd.AddCommand(configureCmd)
 }
 

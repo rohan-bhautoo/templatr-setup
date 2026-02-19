@@ -36,7 +36,6 @@ After installation, optionally runs the configure step to set up
 }
 
 func init() {
-	setupCmd.Flags().StringVarP(&manifestFile, "file", "f", "", "Path to .templatr.toml manifest file")
 	setupCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Show what would be installed without installing")
 	setupCmd.Flags().BoolVarP(&yesFlag, "yes", "y", false, "Skip confirmation prompts")
 	rootCmd.AddCommand(setupCmd)

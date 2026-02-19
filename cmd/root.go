@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"embed"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/templatr/templatr-setup/internal/logger"
 	"github.com/templatr/templatr-setup/internal/selfupdate"
+	"github.com/templatr/templatr-setup/internal/server"
 	"golang.org/x/term"
 )
 
@@ -14,6 +17,7 @@ var (
 	commitStr  string
 	dateStr    string
 	uiFlag     bool
+	webAssets  embed.FS
 )
 
 // SetVersionInfo sets the version info from ldflags.
@@ -21,6 +25,11 @@ func SetVersionInfo(version, commit, date string) {
 	versionStr = version
 	commitStr = commit
 	dateStr = date
+}
+
+// SetWebAssets sets the embedded web UI assets.
+func SetWebAssets(assets embed.FS) {
+	webAssets = assets
 }
 
 var rootCmd = &cobra.Command{
@@ -69,6 +78,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&uiFlag, "ui", false, "Launch the visual web dashboard in your browser")
+	rootCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Path to .templatr.toml manifest file")
 }
 
 // isTerminal checks if stdin is connected to a terminal.
@@ -78,9 +88,18 @@ func isTerminal() bool {
 }
 
 func launchWebUI() {
-	fmt.Println("Starting web dashboard on http://localhost:19532 ...")
-	// TODO: implement server.Start() from internal/server
-	fmt.Println("Web UI not yet implemented.")
+	log := logger.New()
+	if err := log.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: could not initialize logger: %s\n", err)
+	} else {
+		defer log.Close()
+	}
+
+	srv := server.New(webAssets, log, manifestFile)
+	if err := srv.Start(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		os.Exit(1)
+	}
 }
 
 func runSetup(cmd *cobra.Command, args []string) {
