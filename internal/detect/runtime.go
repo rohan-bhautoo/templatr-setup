@@ -68,17 +68,18 @@ func detectRuntime(c runtimeCheck) RuntimeInfo {
 	path, err := exec.LookPath(c.Binary)
 	if err != nil {
 		// On Windows, python3 might not exist - try "python" as fallback.
-		if c.Binary == "python3" {
+		switch c.Binary {
+		case "python3":
 			path, err = exec.LookPath("python")
 			if err != nil {
 				return info
 			}
-		} else if c.Binary == "pip3" {
+		case "pip3":
 			path, err = exec.LookPath("pip")
 			if err != nil {
 				return info
 			}
-		} else {
+		default:
 			return info
 		}
 	}
