@@ -219,8 +219,8 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// If a manifest was specified on the command line, auto-load it
-	if s.manifest != "" {
-		go s.loadManifestAndSendPlan(s.manifest)
+	if s.manifestPath != "" {
+		go s.loadManifestAndSendPlan(s.manifestPath)
 	}
 
 	for {
@@ -258,19 +258,7 @@ func (s *Server) loadManifestAndSendPlan(path string) {
 		return
 	}
 
-	plan, err := engine.BuildPlan(m)
-	if err != nil {
-		s.hub.Broadcast(ServerMessage{
-			Type:    MsgTypeError,
-			Message: fmt.Sprintf("Failed to build plan: %s", err),
-		})
-		return
-	}
-
-	s.hub.Broadcast(ServerMessage{
-		Type: MsgTypePlan,
-		Plan: buildPlanData(plan),
-	})
+	s.validateAndBroadcastPlan(m)
 }
 
 // loadManifestFromContent parses uploaded TOML content and broadcasts the plan.
@@ -284,6 +272,11 @@ func (s *Server) loadManifestFromContent(content string) {
 		return
 	}
 
+	s.validateAndBroadcastPlan(m)
+}
+
+// validateAndBroadcastPlan validates a manifest, stores it, builds a plan, and broadcasts it.
+func (s *Server) validateAndBroadcastPlan(m *manifest.Manifest) {
 	if errs := manifest.Validate(m); len(errs) > 0 {
 		s.hub.Broadcast(ServerMessage{
 			Type:    MsgTypeError,
@@ -300,6 +293,8 @@ func (s *Server) loadManifestFromContent(content string) {
 		})
 		return
 	}
+
+	s.loadedManifest = m
 
 	s.hub.Broadcast(ServerMessage{
 		Type: MsgTypePlan,
@@ -318,7 +313,7 @@ func (s *Server) handleClientMessage(client *Client, msg ClientMessage) {
 		}
 
 	case "confirm":
-		go s.runInstallation(msg.ManifestPath)
+		go s.runInstallation()
 
 	case "configure":
 		go s.runConfigure(msg)
@@ -333,15 +328,10 @@ func (s *Server) handleClientMessage(client *Client, msg ClientMessage) {
 }
 
 // runInstallation performs the full installation flow and broadcasts progress.
-func (s *Server) runInstallation(manifestPath string) {
-	path := manifestPath
-	if path == "" {
-		path = s.manifest
-	}
-
-	m, err := manifest.Load(path)
-	if err != nil {
-		s.hub.Broadcast(ServerMessage{Type: MsgTypeError, Message: err.Error()})
+func (s *Server) runInstallation() {
+	m := s.loadedManifest
+	if m == nil {
+		s.hub.Broadcast(ServerMessage{Type: MsgTypeError, Message: "No manifest loaded. Please upload a .templatr.toml file first."})
 		return
 	}
 
@@ -432,14 +422,9 @@ func (s *Server) runInstallation(manifestPath string) {
 
 // runConfigure writes config values and completes the setup.
 func (s *Server) runConfigure(msg ClientMessage) {
-	path := msg.ManifestPath
-	if path == "" {
-		path = s.manifest
-	}
-
-	m, err := manifest.Load(path)
-	if err != nil {
-		s.hub.Broadcast(ServerMessage{Type: MsgTypeError, Message: err.Error()})
+	m := s.loadedManifest
+	if m == nil {
+		s.hub.Broadcast(ServerMessage{Type: MsgTypeError, Message: "No manifest loaded."})
 		return
 	}
 

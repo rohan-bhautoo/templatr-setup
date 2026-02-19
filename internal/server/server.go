@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/templatr/templatr-setup/internal/logger"
+	"github.com/templatr/templatr-setup/internal/manifest"
 )
 
 const defaultPort = 19532
@@ -21,20 +22,21 @@ const defaultPort = 19532
 type Server struct {
 	assets   embed.FS
 	log      *logger.Logger
-	hub      *Hub
-	port     int
-	srv      *http.Server
-	manifest string // path to manifest file
+	hub            *Hub
+	port           int
+	srv            *http.Server
+	manifestPath   string // path to manifest file (from --file flag)
+	loadedManifest *manifest.Manifest // parsed manifest (from file or upload)
 }
 
 // New creates a new server with the embedded web assets.
 func New(assets embed.FS, log *logger.Logger, manifestFile string) *Server {
 	return &Server{
-		assets:   assets,
-		log:      log,
-		hub:      NewHub(),
-		port:     defaultPort,
-		manifest: manifestFile,
+		assets:       assets,
+		log:          log,
+		hub:          NewHub(),
+		port:         defaultPort,
+		manifestPath: manifestFile,
 	}
 }
 
@@ -135,7 +137,7 @@ func (s *Server) spaHandler() http.Handler {
 // handleStatus returns a simple health check response.
 func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"status":"ok","manifest":"%s"}`, s.manifest)
+	fmt.Fprintf(w, `{"status":"ok","manifest":"%s"}`, s.manifestPath)
 }
 
 // findPort tries the default port, then scans upward for an available one.
