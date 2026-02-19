@@ -23,6 +23,21 @@ builds:
       - -X main.version={{.Version}}
       - -X main.commit={{.ShortCommit}}
       - -X main.date={{.Date}}
+    overrides:
+      - goos: windows
+        goarch: amd64
+        ldflags:
+          - -s -w -H windowsgui
+          - -X main.version={{.Version}}
+          - -X main.commit={{.ShortCommit}}
+          - -X main.date={{.Date}}
+      - goos: windows
+        goarch: arm64
+        ldflags:
+          - -s -w -H windowsgui
+          - -X main.version={{.Version}}
+          - -X main.commit={{.ShortCommit}}
+          - -X main.date={{.Date}}
 
 archives:
   - id: default

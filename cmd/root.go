@@ -46,8 +46,12 @@ For developers: run in your terminal for an interactive TUI experience.
 For everyone else: double-click the downloaded file to open the visual
 web dashboard in your browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if uiFlag || !hasManifestAvailable() {
+		if uiFlag {
 			launchWebUI()
+			return
+		}
+		if !hasManifestAvailable() {
+			printNoManifestHelp()
 			return
 		}
 		runSetup(cmd, args)
@@ -56,16 +60,17 @@ web dashboard in your browser.`,
 
 // Execute is the entry point called from main.
 func Execute() {
-	// If no subcommand and no manifest available, skip cobra entirely
-	// and launch the web UI directly. This handles double-click from Explorer
-	// where cobra may not behave as expected.
+	// Attach to parent console first. On Windows with -H windowsgui, this
+	// detects whether we were launched from a terminal (cmd/PowerShell) or
+	// double-clicked from Explorer. Must run before shouldLaunchWebUI().
+	attachConsole()
+
+	// If double-clicked from Explorer (no terminal), launch the web UI
+	// directly, bypassing cobra.
 	if shouldLaunchWebUI() {
 		launchWebUI()
 		return
 	}
-
-	// Attach to parent console for CLI output (needed with -H windowsgui on Windows)
-	attachConsole()
 
 	// Non-blocking update check (runs in background, prints notice after command)
 	updateCh := make(chan *selfupdate.CheckResult, 1)
@@ -90,15 +95,17 @@ func Execute() {
 }
 
 // shouldLaunchWebUI checks if we should bypass cobra and launch the web UI.
-// Returns true when there are no CLI args (just the exe name) and no manifest
-// is available - the typical double-click scenario.
+// Returns true when there are no CLI args and the process was not launched
+// from a terminal - the typical double-click from file explorer scenario.
+// On Windows, this is detected by AttachConsole (set by attachConsole()).
+// On Unix, this is detected by checking if stdin is a terminal.
 func shouldLaunchWebUI() bool {
 	// If there are CLI args beyond the exe name, let cobra handle them
 	if len(os.Args) > 1 {
 		return false
 	}
-	// No args - check if there's a manifest for CLI mode
-	return !hasManifestAvailable()
+	// No args - launch web UI only when not from a terminal (double-click)
+	return !launchedFromConsole()
 }
 
 func init() {
@@ -139,6 +146,18 @@ func launchWebUI() {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
+}
+
+func printNoManifestHelp() {
+	fmt.Println("No .templatr.toml manifest found in the current directory.")
+	fmt.Println()
+	fmt.Println("Navigate to a template directory containing a .templatr.toml file,")
+	fmt.Println("or specify one with the -f flag:")
+	fmt.Println()
+	fmt.Println("  templatr-setup -f <path>    Use a specific manifest file")
+	fmt.Println("  templatr-setup --ui         Open the visual web dashboard")
+	fmt.Println("  templatr-setup doctor       Check system and installed runtimes")
+	fmt.Println("  templatr-setup help         Show all available commands")
 }
 
 func runSetup(_ *cobra.Command, _ []string) {
