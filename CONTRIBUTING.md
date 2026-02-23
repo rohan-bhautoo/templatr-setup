@@ -172,8 +172,8 @@ Detection logic in `cmd/root.go`: `shouldLaunchWebUI()` returns `true` when `len
 
 On Windows, terminal detection uses two methods in `cmd/console_windows.go`:
 
-1. `AttachConsole(ATTACH_PARENT_PROCESS)` — succeeds when run from cmd/PowerShell (for `-H windowsgui` release builds where the process starts without a console)
-2. `GetConsoleProcessList` fallback — if `AttachConsole` fails (console subsystem dev builds already have a console), checks if multiple processes share the console. Count > 1 means a parent shell exists (terminal); count of 1 means Windows created a fresh console (double-click)
+1. `AttachConsole(ATTACH_PARENT_PROCESS)` - succeeds when run from cmd/PowerShell (for `-H windowsgui` release builds where the process starts without a console)
+2. `GetConsoleProcessList` fallback - if `AttachConsole` fails (console subsystem dev builds already have a console), checks if multiple processes share the console. Count > 1 means a parent shell exists (terminal); count of 1 means Windows created a fresh console (double-click)
 
 On Unix, `launchedFromConsole()` checks if stdin is a terminal via `term.IsTerminal()`.
 
